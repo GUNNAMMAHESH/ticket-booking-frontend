@@ -2,17 +2,18 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser,sendOtp } from "../features/userSlice";
 import { useNavigate } from "react-router-dom";
-import Event from "../pages/Event";
+import { isTokenExpired } from "../utils/Auth"; 
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    otp: "", // Add OTP field
+    otp: "", 
   });
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
   const { loading, error, token, user, role } = useSelector(
     (state) => state.user
   ); // Access token from Redux
@@ -30,19 +31,36 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(loginUser(formData)); // Include OTP in the login request
+    dispatch(loginUser(formData)); 
   };
 
-  // Redirect to home page after successful login
   useEffect(() => {
+    
     if (token) {
-      navigate("/"); // Assuming '/' is your home page
+      navigate("/"); 
     }
-  }, [token, navigate]); // Depend on token, so it triggers when token is updated
+  }, [token, navigate]); 
+
+useEffect(() => {
+  const token = localStorage.getItem("token");
+
+  const interval = setInterval(() => {
+   
+    
+    if (isTokenExpired(token)) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      dispatch(logoutUser());
+      navigate("/login"); 
+    }
+  }, 60000); 
+
+  return () => clearInterval(interval); 
+}, [dispatch, navigate]);
 
   const otpsend = (e) => {
     e.preventDefault();
-    dispatch(sendOtp(formData.email)); // Dispatch the action to send the OTP
+    dispatch(sendOtp(formData.email)); 
   };
 
   return (
@@ -50,7 +68,6 @@ const Login = () => {
       <h1 className="text-xl font-bold mb-4">Login</h1>
       {error && <p className="text-red-500">{error.message}</p>}
       {token && <p className="text-green-500">User Login successful!</p>}{" "}
-      {/* Only show if token exists */}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="email" className="block font-semibold">

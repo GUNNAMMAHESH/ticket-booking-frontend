@@ -43,6 +43,7 @@ const Header = () => {
           <NavItem to="/profile">Profile</NavItem>
           <NavItem to="/">Home</NavItem>
           <NavItem to="/events">Events</NavItem>
+          <NavItem to="/tickets">Tickets</NavItem>
 
           <li onClick={handleLogout}>
             <span className="cursor-pointer text-white hover:text-orange-200">Logout</span>

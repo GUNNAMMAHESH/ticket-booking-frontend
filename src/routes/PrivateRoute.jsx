@@ -4,20 +4,19 @@ import { useSelector } from "react-redux";
 
 const PrivateRoute = ({ allowedRoles }) => {
   const { token, role } = useSelector((state) => state.user); 
-  console.log("token",token);
-  console.log("role",role);
- 
+  console.log("token", token);
+  console.log("role", role);
+
   if (!token) {
     return <Navigate to="/login" />;
   }
 
-
+  // Role-based access control
   if (allowedRoles && !allowedRoles.includes(role)) {
-    // If the role is not allowed for this route
     return <Navigate to="/login" />;
   }
 
-  return <Outlet />;
+  return <Outlet />; // This renders the child routes (like Event)
 };
 
 export default PrivateRoute;

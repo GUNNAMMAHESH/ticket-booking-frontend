@@ -1,7 +1,11 @@
-// src/loaders/HomeLoader.js
-import { fetchData } from '../services/api';
+import axiosInstance from '../utils/axiosInstance';
 
 export const homeLoader = async () => {
-  const data = await fetchData('/home');  // Assuming this endpoint exists
-  return { data };  // Data is passed to the Home component as a prop
+  try {
+    const response = await axiosInstance.get('/home'); // Call API through axiosInstance
+    return { data: response.data }; // Pass the fetched data to Home component
+  } catch (error) {
+    console.error("Error loading home data:", error);
+    throw error; // This will trigger ErrorPage if you have errorElement in routesConfig
+  }
 };

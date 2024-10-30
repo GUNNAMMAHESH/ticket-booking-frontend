@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createUser } from "../features/userSlice";
 
-const signup = () => {
+const Signup = () => {
   const [formData, setFormData] = useState({
     username: "",
-    role: "", // Default role value set to 'user'
+    role: "user", // Default role value set to 'user'
     email: "",
     phone: "",
     password: "",
@@ -24,29 +24,31 @@ const signup = () => {
     const { password, ConfirmPassword } = formData;
 
     if (ConfirmPassword !== password) {
-      // Display an error or notification about mismatching passwords
       console.error("Passwords do not match!");
-      
       return;
     }
 
-    dispatch(createUser(formData)); // Dispatch the createUser action
+    dispatch(createUser(formData));
 
     setFormData({
-          username: "",
-          role: "user",
-          email: "",
-          phone: "",
-          password: "",
-          ConfirmPassword: "",
-        });
+      username: "",
+      role: "user",
+      email: "",
+      phone: "",
+      password: "",
+      ConfirmPassword: "",
+    });
   };
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
       <h1 className="text-xl font-bold mb-4">Create New User</h1>
       {error && <p className="text-red-500">{error.message}</p>}
-      {/* {user && <p className="text-green-500">User created successfully!</p>} */}
+      {/* {user && (
+        <p className="text-green-500">
+          User created successfully! Welcome, {user.username} ({user.role})
+        </p>
+      )} */}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="username" className="block font-semibold">
@@ -70,7 +72,7 @@ const signup = () => {
             id="role"
             name="role"
             value={formData.role}
-            onChange={handleChange} // Handle role change
+            onChange={handleChange}
             className="w-full p-2 border rounded"
             required
           >
@@ -137,7 +139,7 @@ const signup = () => {
 
         <button
           type="submit"
-          className="w-full font-semibold  bg-orange-400 text-white py-2 rounded hover:text-orange-600 hover:bg-white hover:border-2 hover:border-orange-400 transition ease-in-out delay-250 active:bg-orange-400 active:text-white"
+          className="w-full font-semibold bg-orange-400 text-white py-2 rounded hover:text-orange-600 hover:bg-white hover:border-2 hover:border-orange-400 transition ease-in-out delay-250 active:bg-orange-400 active:text-white"
           disabled={loading}
         >
           {loading ? "Creating..." : "Create User"}
@@ -147,4 +149,4 @@ const signup = () => {
   );
 };
 
-export default signup;
+export default Signup;

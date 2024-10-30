@@ -1,17 +1,20 @@
 import React from 'react';
-import Allmovies from '../components/allmovies';
+import AllEvents from '../components/AllEvents';
 import { useSelector } from 'react-redux';
 
 function Home() {
-  // Access the name property from the user object in the Redux state
-  const name = useSelector((state) => state.user.user.username); // Correct path to access the name
-  console.log("name",name);
-  
+  // Access the name property from the user object in the Redux state with error handling
+  const user = useSelector((state) => state.user.user);
+  const name = user?.username || "Guest"; // Use optional chaining to avoid errors
+
+  console.log("name", name);
 
   return (
     <div>
-      <div>Welcome, {name ? name : 'Guest'}!</div> {/* Display user name or fallback text */}
-      <Allmovies />
+      <div className='text-xl font-semibold'>
+        Welcome, <span className='text-orange-400 font-semibold text-3xl'>{name}!</span>
+      </div> 
+      <AllEvents />
     </div>
   );
 }
