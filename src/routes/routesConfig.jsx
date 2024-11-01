@@ -7,7 +7,7 @@ import ErrorPage from "../pages/ErrorPage";
 import { homeLoader } from "../loaders/HomeLoader";
 import Event from "../pages/Event";
 import Login from "../components/Login";
-import PrivateRoute from "./PrivateRoute";
+// import PrivateRoute from "./PrivateRoute";
 
 const routesConfig = createBrowserRouter([
   {
