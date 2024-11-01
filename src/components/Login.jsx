@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser,sendOtp } from "../features/userSlice";
 import { useNavigate } from "react-router-dom";
 import { isTokenExpired } from "../utils/Auth"; 
-
+import { toast } from 'react-toastify';
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -23,11 +23,10 @@ const Login = () => {
   };
 
   useEffect(() => {
-    console.log("User:", user);
-    console.log("Role:", role);
-    console.log("Token:", token);
-    console.log("Error:", error);
-  }, [user, role, token, error]);
+    if (error) {
+      toast.error(error.message); // Show error toast
+    }
+  }, [error]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -37,6 +36,7 @@ const Login = () => {
   useEffect(() => {
     
     if (token) {
+      toast.success("Login successful!"); 
       navigate("/"); 
     }
   }, [token, navigate]); 
@@ -61,6 +61,7 @@ useEffect(() => {
   const otpsend = (e) => {
     e.preventDefault();
     dispatch(sendOtp(formData.email)); 
+    toast.info("OTP sent!");
   };
 
   return (

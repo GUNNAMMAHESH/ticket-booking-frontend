@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createUser } from "../features/userSlice";
-
+import { useNavigate } from "react-router-dom";
 const Signup = () => {
   const [formData, setFormData] = useState({
     username: "",
@@ -13,6 +13,7 @@ const Signup = () => {
   });
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { loading, error, user } = useSelector((state) => state.user);
 
   const handleChange = (e) => {
@@ -38,6 +39,7 @@ const Signup = () => {
       password: "",
       ConfirmPassword: "",
     });
+    navigate("/login")
   };
 
   return (

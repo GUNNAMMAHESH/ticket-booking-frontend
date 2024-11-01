@@ -20,16 +20,16 @@ const routesConfig = createBrowserRouter([
         element: <Home />,
         loader: homeLoader, // Fetch data before rendering Home
       },
-      {
-        path: "events",
-        element: <PrivateRoute allowedRoles={["admin", "user"]} />,  // PrivateRoute applied here
-        children: [
-          {
-            index: true, // Matches "/events" directly
-            element: <Event />,
-          },
-        ],
-      },
+      // {
+      //   path: "events",
+      //   element: <PrivateRoute allowedRoles={["admin", "user"]} />,  // PrivateRoute applied here
+      //   children: [
+      //     {
+      //       index: true, // Matches "/events" directly
+      //       element: <Event />,
+      //     },
+      //   ],
+      // },
       {
         path: "login",
         element: <Login />,

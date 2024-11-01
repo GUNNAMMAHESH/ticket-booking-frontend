@@ -54,11 +54,13 @@ function AllEvents() {
   const handleDelete = async (id) => {
     try {
       await axiosInstance.delete(`/events/delete/${id}`);
-      setAllMovies(allMovies.filter((movie) => movie._id !== id)); // Remove the deleted event from state
+      setAllMovies(allMovies.filter((movie) => movie._id !== id));
     } catch (error) {
       console.error("Failed to delete event:", error.message);
+      setError(`Failed to delete event. Please try again later.`);
     }
   };
+  
 
   return (
     <div className="flex flex-col items-center justify-center">

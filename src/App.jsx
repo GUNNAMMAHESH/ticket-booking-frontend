@@ -1,14 +1,14 @@
 // src/App.js
 import React from "react";
 import AppRoutes from "./routes/AppRoutes";
-import Event from "./pages/Event";
-
-
+import { ToastContainer } from 'react-toastify'; // Import ToastContainer
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   return (
     <>
       <AppRoutes />
+      <ToastContainer />
     </>
   );
 };

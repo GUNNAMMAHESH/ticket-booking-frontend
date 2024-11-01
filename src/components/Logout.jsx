@@ -14,7 +14,7 @@ const Logout = () => {
     // If user clicks "OK"
     if (confirmLogout) {
       dispatch(logoutUser()); // Dispatch logout action
-      navigate('/login'); // Redirect to login page after logout
+      navigate('/'); // Redirect to login page after logout
     }
   };
 

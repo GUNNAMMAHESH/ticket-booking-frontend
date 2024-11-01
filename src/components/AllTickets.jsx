@@ -1,32 +1,67 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axiosInstance from "../utils/axiosInstance";
-import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 function AllTickets() {
-  const [allTickets, setallTickets] = useState([]);
-  const [model, setModel] = useState(false);
+  const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true); // Loader state
 
-  const navigate = useNavigate();
+  const { role, id } = useSelector((state) => state.user.user) || {};
+  const isMounted = useRef(false);
 
   useEffect(() => {
-    const getTickets = async () => {
+    const fetchTickets = async () => {
+      setLoading(true);
       try {
-        const response = await axiosInstance.get("/tickets/getTickets");
-        setallTickets(response.data);
-        setError(null);
+        const params = role === "admin" ? {} : { userId: id };
+        const response = await axiosInstance.get("/tickets/getTickets", { params });
+
+        if (response.data.success && Array.isArray(response.data.data)) {
+          setTickets(response.data.data);
+          if (response.data.data.length === 0) {
+            toast.error("No tickets found.");
+          }
+        } else {
+          toast.error("Failed to load tickets.");
+        }
       } catch (error) {
-        console.log("Error fetching tickets:", error.message);
-        setError("Failed to load Tickets. Please try again later.");
+        console.error("Error fetching tickets:", error);
+        toast.error("Failed to load tickets. Please try again later.");
       } finally {
-        setLoading(false); // Stop loading once API call completes
+        setLoading(false);
       }
     };
 
-    getTickets();
-  }, []);
+    if (!isMounted.current) {
+      fetchTickets();
+      isMounted.current = true;
+    }
+  }, [role, id]);
+
+  const handleShowModal = (ticket) => {
+    setSelectedTicket(ticket);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedTicket(null);
+  };
+
+  const handleDeleteTicket = async (ticketId) => {
+    try {
+      await axiosInstance.delete(`/tickets/DeleteTicket/${ticketId}`);
+      setTickets((prevTickets) => prevTickets.filter((t) => t._id !== ticketId));
+      handleCloseModal();
+      toast.success("Ticket deleted successfully.");
+    } catch (error) {
+      console.error("Failed to delete ticket:", error);
+      toast.error("Failed to delete ticket.");
+    }
+  };
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
@@ -42,90 +77,60 @@ function AllTickets() {
     return `${formattedDate} ${formattedTime}`;
   };
 
-  const showModel = (Ticket) => {
-    setSelectedTicket(Ticket);
-    setModel(true);
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await axiosInstance.delete(`/tickets/DeleteTicket/${id}`);
-      setallTickets(allTickets.filter((ticket) => ticket._id !== id)); // Remove the deleted event from state
-    } catch (error) {
-      console.error("Failed to delete event:", error.message);
-    }
-  };
-
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="text-orange-400 font-semibold text-3xl mb-6">Tickets</div>
+    <div className="flex flex-col items-center justify-center p-4">
+      <h1 className="text-orange-400 font-semibold text-3xl mb-6">Your Tickets</h1>
 
       {loading ? (
         <div className="text-xl text-gray-500">Loading Tickets...</div>
-      ) : error ? (
-        <div className="text-red-500 text-xl font-semibold">{error}</div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
-          {allTickets.map((ticket, index) => (
-            <div
-              key={index}
-              onClick={() => showModel(ticket)}
-              className="flex flex-col justify-end items-start w-full h-80 min-h-[12rem] p-4 bg-orange-400 text-white text-xl font-semibold border rounded-lg cursor-pointer hover:bg-orange-500 transition"
-            >
+        <div className="flex flex-row flex-nowrap overflow-x-auto space-x-4 py-4">
+          {tickets.length > 0 ? (
+            tickets.map((ticket) => (
               <div
+                key={ticket._id}
+                onClick={() => handleShowModal(ticket)}
+                className="flex flex-col justify-end items-start w-64 h-80 min-h-[12rem] p-4 text-white text-xl font-semibold border rounded-lg cursor-pointer transition bg-cover bg-center hover:bg-orange-500"
+                style={{
+                  backgroundImage: ticket.photo ? `url(${ticket.photo})` : "none",
+                  backgroundColor: ticket.photo ? "transparent" : "#fb923c",
+                }}
               >
-              <div>{ticket.TicketName}</div>
-              <div>{formatDateTime(ticket.date)}</div>
-              <div>{ticket.location}</div>
+                <div>
+                  <div>{ticket.TicketName}</div>
+                  <div>{formatDateTime(ticket.date)}</div>
+                  <div>{ticket.location}</div>
+                </div>
               </div>
-              <button
-                  onClick={() => handleDelete(ticket._id)}
-                  className="bg-red-500 text-white rounded px-2 py-1"
-                >
-                  Delete
-                </button>
-            </div>
-          ))}
+            ))
+          ) : (
+            <div className="text-red-500">No tickets found.</div>
+          )}
         </div>
       )}
 
-      {model && selectedTicket && (
+      {isModalOpen && selectedTicket && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
           <div className="bg-white p-6 w-[90%] md:w-[60%] lg:w-[40%] h-1/2 rounded shadow-lg flex flex-col justify-between">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">
-                {selectedTicket.TicketName}
-              </h2>
-              <span
-                className="font-semibold text-4xl cursor-pointer"
-                onClick={() => setModel(false)}
-              >
+              <h2 className="text-xl font-semibold">{selectedTicket.TicketName}</h2>
+              <span className="font-semibold text-4xl cursor-pointer" onClick={handleCloseModal}>
                 &times;
               </span>
             </div>
-
             <div className="flex flex-col text-left leading-10 text-xl mt-auto">
-              <p>
-                <strong>Date:</strong> {formatDateTime(selectedTicket.date)}
-              </p>
-              <p>
-                <strong>Location:</strong> {selectedTicket.location}
-              </p>
-              <p>
-                <strong>Description:</strong>{" "}
-                {selectedTicket.description || "No description available"}
-              </p>
-              <p>
-                <strong>Price:</strong> {selectedTicket.price || "Free"}
-              </p>
-              <button
-                onClick={() =>
-                  navigate("/Ticket", { state: { Ticket: selectedTicket } })
-                }
-                className="bg-orange-400 font-semibold"
-              >
-                Book Now
-              </button>
+              <p><strong>Date:</strong> {formatDateTime(selectedTicket.date)}</p>
+              <p><strong>Location:</strong> {selectedTicket.location}</p>
+              <p><strong>Description:</strong> {selectedTicket.description || "No description available"}</p>
+              <p><strong>Price:</strong> {selectedTicket.price || "Free"}</p>
+              {selectedTicket.photo && (
+                <img src={selectedTicket.photo} alt={selectedTicket.TicketName} className="mb-2 w-full h-32 object-cover rounded-lg" />
+              )}
+              <div className="flex justify-end">
+                <button onClick={() => handleDeleteTicket(selectedTicket._id)} className="bg-red-600 text-white px-2 rounded">
+                  Delete Ticket
+                </button>
+              </div>
             </div>
           </div>
         </div>
