@@ -14,9 +14,9 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   
-  const { loading, error, token, user, role } = useSelector(
+  const { loading, error, token} = useSelector(
     (state) => state.user
-  ); // Access token from Redux
+  ); 
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,7 +24,7 @@ const Login = () => {
 
   useEffect(() => {
     if (error) {
-      toast.error(error.message); // Show error toast
+      toast.error(error.message); 
     }
   }, [error]);
 
@@ -60,8 +60,8 @@ useEffect(() => {
 
   const otpsend = (e) => {
     e.preventDefault();
-    dispatch(sendOtp(formData.email)); 
-    toast.info("OTP sent!");
+    dispatch(sendOtp({ email: formData.email, password: formData.password })); 
+    
   };
 
   return (

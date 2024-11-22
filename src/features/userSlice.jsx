@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { isTokenExpired } from "../utils/Auth"; // Adjust path if needed
+import { isTokenExpired } from "../utils/Auth"; 
+import { toast } from "react-toastify";
+import { toastSettings } from "../utils/toastSettings";
 
 
-// Async thunk to create a new user
 export const createUser = createAsyncThunk(
   "user/createUser",
   async (userData, { rejectWithValue }) => {
@@ -13,35 +14,32 @@ export const createUser = createAsyncThunk(
         "http://localhost:5000/user/create",
         userData
       );
-      console.log("Create User Response:", response.data); // Log response data
+      console.log("Create User Response:", response.data); 
       return response.data;
     } catch (error) {
-      console.error("Create User Error:", error.response.data); // Log error
+      console.error("Create User Error:", error.response.data);
       return rejectWithValue(error.response.data);
     }
   }
 );
 
-// In userSlice.js
-
-// Async thunk to send OTP
 export const sendOtp = createAsyncThunk(
   "user/sendOtp",
-  async (email, { rejectWithValue }) => {
+  async ({email,password}, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         "http://localhost:5000/user/login-send-otp",
-        { email }
+        { email,password }
       );
-      return response.data; // Return the response data
+toast.info("OTP is sent to your Email",toastSettings)
+      return response.data;
     } catch (error) {
-      console.error("Send OTP Error:", error.response.data); // Log error
-      return rejectWithValue(error.response.data); // Return error for Redux
+      console.error("Send OTP Error:", error.response.data); 
+      return rejectWithValue(error.response.data); 
     }
   }
 );
 
-// Async thunk to handle user login
 export const loginUser = createAsyncThunk(
   "user/loginUser",
   async (loginData, { rejectWithValue }) => {
@@ -61,7 +59,6 @@ export const loginUser = createAsyncThunk(
 
 
       if (token) {
-        // Attempt to decode the token
         try {
           const decoded = jwtDecode(token);
           console.log("Decoded JWT:", decoded);

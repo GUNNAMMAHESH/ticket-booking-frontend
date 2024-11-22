@@ -8,39 +8,38 @@ const CreateEvent = () => {
     date: "",
     location: "",
     price: "",
-    photo: null, // New state for photo
+    photo: null, 
   });
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-    // Handle file input separately
     if (type === 'file') {
-      setEvent({ ...event, [name]: files[0] }); // Save the file
+      setEvent({ ...event, [name]: files[0] }); 
     } else {
-      setEvent({ ...event, [name]: value }); // Save other input values
+      setEvent({ ...event, [name]: value }); 
     }
   };
 
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log(event); // Check the event data
+    console.log(event); 
 
     const formData = new FormData();
     for (const key in event) {
-      formData.append(key, event[key]); // Append each key-value pair to FormData
+      formData.append(key, event[key]); 
     }
 
     try {
       const response = await axiosInstance.post(
         "http://localhost:5000/events/create",
-        formData, // Send the form data
+        formData, 
         {
           headers: {
-            "Content-Type": "multipart/form-data", // Important for file uploads
+            "Content-Type": "multipart/form-data",
           },
         }
       );
-      console.log(response.data); // Handle successful response
+      console.log(response.data); 
     } catch (error) {
       console.log("Failed to create Event", error.message);
     }
@@ -128,7 +127,7 @@ const CreateEvent = () => {
               type="file"
               id="photo"
               name="photo"
-              accept="image/*" // Limit to image files
+              accept="image/*" 
               onChange={handleChange}
               className="w-full p-2 border rounded"
               required

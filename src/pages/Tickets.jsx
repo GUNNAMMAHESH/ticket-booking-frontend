@@ -65,7 +65,6 @@ function Tickets() {
               <strong>Price:</strong> {event.price || "Free"}
             </p>
 
-            {/* Booking confirmation button */}
             <button
               className="bg-orange-400 text-white p-2 rounded mt-4"
               onClick={submit}

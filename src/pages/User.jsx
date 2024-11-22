@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const Signup = () => {
   const [formData, setFormData] = useState({
     username: "",
-    role: "user", // Default role value set to 'user'
+    role: "user",
     email: "",
     phone: "",
     password: "",

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import CreateEvent from "./event/CreateEvent";
+import { IoArrowForward } from "react-icons/io5";
 
 function AllEvents() {
   const [allMovies, setAllMovies] = useState([]);
@@ -8,23 +11,26 @@ function AllEvents() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isCreate, setIsCreate] = useState(false);
 
   const navigate = useNavigate();
+  const { role } = useSelector((state) => state.user);
+  console.log("check", role);
+
+  const getMovies = async () => {
+    try {
+      const response = await axiosInstance.get("/events/allevents");
+      setAllMovies(response.data);
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching movies:", error.message);
+      setError("Failed to load events. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const getMovies = async () => {
-      try {
-        const response = await axiosInstance.get("/events/allevents");
-        setAllMovies(response.data);
-        setError(null);
-      } catch (error) {
-        console.error("Error fetching movies:", error.message);
-        setError("Failed to load events. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     getMovies();
   }, []);
 
@@ -48,7 +54,7 @@ function AllEvents() {
   };
 
   const handleEdit = (event) => {
-    navigate("/events/edit", { state: { event } }); // Navigate to edit page with event data
+    navigate("/events/edit", { state: { event } }); 
   };
 
   const handleDelete = async (id) => {
@@ -60,12 +66,30 @@ function AllEvents() {
       setError(`Failed to delete event. Please try again later.`);
     }
   };
-  
-
+  const handleCreate = () => {
+    setIsCreate(true);
+  };
+  if (isCreate) {
+    return <CreateEvent />;
+  }
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="text-orange-400 font-semibold text-3xl mb-6">Events</div>
-
+      <div className="flex items-center w-full font-semibold text-3xl mb-6">
+        <div className="flex justify-center w-[95%] text-orange-400">
+          <span>Events</span>
+        </div>
+        {role && role == "admin" && (
+          <div className="flex items-center space-x-4 w-[10%]">
+            <button
+              className="flex items-center justify-center space-x-2 bg-orange-400 text-white text-xl px-4 py-2 rounded-md hover:bg-orange-500 active:opacity-75 cursor-pointer"
+              onClick={handleCreate}
+            >
+              <span>Create</span>
+              <IoArrowForward />
+            </button>
+          </div>
+        )}
+      </div>
       {loading ? (
         <div className="text-xl text-gray-500">Loading events...</div>
       ) : error ? (
@@ -77,28 +101,30 @@ function AllEvents() {
               key={movie._id}
               className="flex flex-col justify-end items-start w-full h-80 min-h-[12rem] p-4 text-white text-xl font-semibold border rounded-lg cursor-pointer transition bg-cover bg-center hover:bg-orange-500"
               style={{
-                backgroundImage: movie.photo ? `url(${movie.photo})` : "none", // only set if photo exists
-                backgroundColor: movie.photo ? "transparent" : "#fb923c", // fallback to orange color if no photo
+                backgroundImage: movie.photo ? `url(${movie.photo})` : "none", 
+                backgroundColor: movie.photo ? "transparent" : "#fb923c", 
               }}
               onClick={() => showModel(movie)}
             >
               <div>{movie.EventName}</div>
               <div>{formatDateTime(movie.date)}</div>
               <div>{movie.location}</div>
-              <div className="flex justify-between mt-2">
-                <button
-                  onClick={() => handleEdit(movie)}
-                  className="bg-blue-500 text-white rounded px-2 py-1"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(movie._id)}
-                  className="bg-red-500 text-white rounded px-2 py-1"
-                >
-                  Delete
-                </button>
-              </div>
+              {role && role == "admin" && (
+                <div className="flex justify-between mt-2 space-x-2">
+                  <button
+                    onClick={() => handleEdit(movie)}
+                    className="bg-blue-500 text-white rounded px-2 py-1"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(movie._id)}
+                    className="bg-red-500 text-white rounded px-2 py-1"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -106,48 +132,53 @@ function AllEvents() {
 
       {model && selectedEvent && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-6 w-[90%] md:w-[60%] lg:w-[40%] h-1/2 rounded shadow-lg flex flex-col justify-between">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">
-                {selectedEvent.EventName}
-              </h2>
+          <div className="bg-white p-4 w-[70%] md:w-[60%] lg:w-[50%] h-1/2 rounded shadow-lg flex flex-col justify-between">
+            <div className="flex justify-end">
               <span
-                className="font-semibold text-4xl cursor-pointer"
+                className="font-semibold text-5xl cursor-pointer"
                 onClick={() => setModel(false)}
               >
                 &times;
               </span>
             </div>
-            <div className="flex flex-col text-left leading-10 text-xl mt-auto">
-              <p>
-                <strong>Date:</strong> {formatDateTime(selectedEvent.date)}
-              </p>
-              <p>
-                <strong>Location:</strong> {selectedEvent.location}
-              </p>
-              <p>
-                <strong>Description:</strong>{" "}
-                {selectedEvent.description || "No description available"}
-              </p>
-              <p>
-                <strong>Price:</strong> {selectedEvent.price || "Free"}
-              </p>
-              {selectedEvent.photo && (
-                <img
-                  src={selectedEvent.photo}
-                  alt={selectedEvent.EventName}
-                  className="mb-2 w-full h-32 object-cover rounded-lg"
-                />
-              )}
-              <button
-                onClick={() =>
-                  navigate("/tickets", { state: { event: selectedEvent } })
-                }
-                className="bg-orange-400 font-semibold"
-              >
-                Book Now
-              </button>
+            <div className="flex flex-row space-x-4 text-left leading-10 text-xl">
+              <div className="w-1/2">
+                {selectedEvent.photo && (
+                  <img
+                    src={selectedEvent.photo}
+                    alt={selectedEvent.EventName}
+                    className="mb-2 w-full h-full object-cover rounded-lg"
+                  />
+                )}
+              </div>
+              <div>
+                <p>
+                  <strong>Movie:</strong>
+                  {selectedEvent.EventName}
+                </p>
+                <p>
+                  <strong>Date:</strong> {formatDateTime(selectedEvent.date)}
+                </p>
+                <p>
+                  <strong>Location:</strong> {selectedEvent.location}
+                </p>
+                <p>
+                  <strong>Description:</strong>{" "}
+                  {selectedEvent.description || "No description available"}
+                </p>
+                <p>
+                  <strong>Price:</strong> {selectedEvent.price || "Free"}
+                </p>
+              </div>
             </div>
+            <button
+              onClick={() =>
+                navigate("/tickets", { state: { event: selectedEvent } })
+              }
+              className="bg-orange-400 font-semibold text-2xl text-white p-2 m-2 hover:opacity-75 active:opacity-100"
+            >
+              Book Now
+            </button>
           </div>
         </div>
       )}

@@ -13,12 +13,12 @@ const routesConfig = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
-    errorElement: <ErrorPage />, // Custom error page
+    errorElement: <ErrorPage />, 
     children: [
       {
         index: true,
         element: <Home />,
-        loader: homeLoader, // Fetch data before rendering Home
+        loader: homeLoader,
       },
       // {
       //   path: "events",

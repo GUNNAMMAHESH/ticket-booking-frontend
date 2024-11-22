@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { toastSettings } from "../utils/toastSettings";
 
 function AllTickets() {
   const [tickets, setTickets] = useState([]);
@@ -12,34 +13,38 @@ function AllTickets() {
   const { role, id } = useSelector((state) => state.user.user) || {};
   const isMounted = useRef(false);
 
-  useEffect(() => {
-    const fetchTickets = async () => {
-      setLoading(true);
-      try {
-        const params = role === "admin" ? {} : { userId: id };
-        const response = await axiosInstance.get("/tickets/getTickets", { params });
+  const fetchTickets = async () => {
+    setLoading(true);
+    try {
+      const params = role === "admin" ? {} : { userId: id };
+      const response = await axiosInstance.get("/tickets/getTickets", {
+        params,
+      });
 
-        if (response.data.success && Array.isArray(response.data.data)) {
-          setTickets(response.data.data);
-          if (response.data.data.length === 0) {
-            toast.error("No tickets found.");
-          }
-        } else {
-          toast.error("Failed to load tickets.");
+      if (response.data.success && Array.isArray(response.data.data)) {
+        setTickets(response.data.data);
+        if (response.data.data.length === 0) {
+          toast.error("No tickets found.", toastSettings);
         }
-      } catch (error) {
-        console.error("Error fetching tickets:", error);
-        toast.error("Failed to load tickets. Please try again later.");
-      } finally {
-        setLoading(false);
+      } else {
+        toast.error("Failed to load tickets.", toastSettings);
       }
-    };
-
+    } catch (error) {
+      console.error("Error fetching tickets:", error);
+      toast.error(
+        "Failed to load tickets. Please try again later.",
+        toastSettings
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     if (!isMounted.current) {
       fetchTickets();
       isMounted.current = true;
     }
-  }, [role, id]);
+  }, [fetchTickets]);
 
   const handleShowModal = (ticket) => {
     setSelectedTicket(ticket);
@@ -54,12 +59,14 @@ function AllTickets() {
   const handleDeleteTicket = async (ticketId) => {
     try {
       await axiosInstance.delete(`/tickets/DeleteTicket/${ticketId}`);
-      setTickets((prevTickets) => prevTickets.filter((t) => t._id !== ticketId));
+      setTickets((prevTickets) =>
+        prevTickets.filter((t) => t._id !== ticketId)
+      );
       handleCloseModal();
-      toast.success("Ticket deleted successfully.");
+      toast.success("Ticket deleted successfully.", toastSettings);
     } catch (error) {
       console.error("Failed to delete ticket:", error);
-      toast.error("Failed to delete ticket.");
+      toast.error("Failed to delete ticket.", toastSettings);
     }
   };
 
@@ -79,7 +86,9 @@ function AllTickets() {
 
   return (
     <div className="flex flex-col items-center justify-center p-4">
-      <h1 className="text-orange-400 font-semibold text-3xl mb-6">Your Tickets</h1>
+      <h1 className="text-orange-400 font-semibold text-3xl mb-6">
+        Your Tickets
+      </h1>
 
       {loading ? (
         <div className="text-xl text-gray-500">Loading Tickets...</div>
@@ -92,7 +101,9 @@ function AllTickets() {
                 onClick={() => handleShowModal(ticket)}
                 className="flex flex-col justify-end items-start w-64 h-80 min-h-[12rem] p-4 text-white text-xl font-semibold border rounded-lg cursor-pointer transition bg-cover bg-center hover:bg-orange-500"
                 style={{
-                  backgroundImage: ticket.photo ? `url(${ticket.photo})` : "none",
+                  backgroundImage: ticket.photo
+                    ? `url(${ticket.photo})`
+                    : "none",
                   backgroundColor: ticket.photo ? "transparent" : "#fb923c",
                 }}
               >
@@ -110,27 +121,52 @@ function AllTickets() {
       )}
 
       {isModalOpen && selectedTicket && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-6 w-[90%] md:w-[60%] lg:w-[40%] h-1/2 rounded shadow-lg flex flex-col justify-between">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 ">
+          <div className="bg-white p-3 w-[70%] md:w-[60%] lg:w-[50%] h-1/2 rounded shadow-lg flex flex-col justify-between">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">{selectedTicket.TicketName}</h2>
-              <span className="font-semibold text-4xl cursor-pointer" onClick={handleCloseModal}>
+              <h2 className="text-xl font-semibold">
+                {selectedTicket.TicketName}
+              </h2>
+              <span
+                className="font-semibold text-4xl cursor-pointer"
+                onClick={handleCloseModal}
+              >
                 &times;
               </span>
             </div>
-            <div className="flex flex-col text-left leading-10 text-xl mt-auto">
-              <p><strong>Date:</strong> {formatDateTime(selectedTicket.date)}</p>
-              <p><strong>Location:</strong> {selectedTicket.location}</p>
-              <p><strong>Description:</strong> {selectedTicket.description || "No description available"}</p>
-              <p><strong>Price:</strong> {selectedTicket.price || "Free"}</p>
-              {selectedTicket.photo && (
-                <img src={selectedTicket.photo} alt={selectedTicket.TicketName} className="mb-2 w-full h-32 object-cover rounded-lg" />
-              )}
-              <div className="flex justify-end">
-                <button onClick={() => handleDeleteTicket(selectedTicket._id)} className="bg-red-600 text-white px-2 rounded">
-                  Delete Ticket
-                </button>
+            <div className="flex flex-row leading-10 text-xl mt-auto">
+              <div className="w-1/2 h-72">
+                {selectedTicket.photo && (
+                  <img
+                    src={selectedTicket.photo}
+                    alt={selectedTicket.TicketName}
+                    className=" w-full h-full object-cover rounded-lg"
+                  />
+                )}
               </div>
+              <div className="pl-2">
+                <p>
+                  <strong>Date:</strong> {formatDateTime(selectedTicket.date)}
+                </p>
+                <p>
+                  <strong>Location:</strong> {selectedTicket.location}
+                </p>
+                <p>
+                  <strong>Description:</strong>
+                  {selectedTicket.description || "No description available"}
+                </p>
+                <p>
+                  <strong>Price:</strong> {selectedTicket.price || "Free"}
+                </p>
+              </div>
+            </div>
+            <div className="flex justify-end ">
+              <button
+                onClick={() => handleDeleteTicket(selectedTicket._id)}
+                className="bg-red-600 text-white p-2 rounded hover:opacity-75 active:bg-green-700"
+              >
+                Delete Ticket
+              </button>
             </div>
           </div>
         </div>
