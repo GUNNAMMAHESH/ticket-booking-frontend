@@ -7,17 +7,17 @@ import User from "../pages/User";
 import Event from "../pages/Event";
 import Login from "../components/Login";
 import ErrorPage from "../pages/ErrorPage";
-import Profile from "../components/Profile";
+import Profile from "../pages/Profile";
 import DebugComponent from "../components/DebugComponent";
 import PrivateRoute from "./PrivateRoute";
 import Tickets from "../pages/Tickets";
 import CreateEvent from "../components/event/CreateEvent";
-
+import { homeLoader } from "../loaders/HomeLoader";
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
+      <Route index element={<Home />} loader={homeLoader} /> 
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<User />} />
         <Route path="error" element={<ErrorPage />} />

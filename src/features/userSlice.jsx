@@ -102,7 +102,6 @@ const userSlice = createSlice({
       state.user = action.payload.user || {};
       state.token = action.payload.token || null;
       state.role = action.payload.role || null;
-      console.log("User Login Success:", state);
     },
     logoutUser: (state) => {
       state.user = null;
@@ -111,7 +110,7 @@ const userSlice = createSlice({
       state.error = "your account is not signin.please signin";
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      console.log("User Logged Out:", state);
+      console.log("User Logged Out");
     },
   },
   extraReducers: (builder) => {

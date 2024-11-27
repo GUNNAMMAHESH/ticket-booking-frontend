@@ -49,7 +49,7 @@ function Tickets() {
       {event ? (
         <>
           <h1 className="text-3xl font-semibold mb-4">Confirm Your Booking</h1>
-          <div className="bg-white p-6 rounded shadow-md w-full md:w-1/2">
+          <div className="bg-white p-6 rounded shadow-md w-full md:w-1/2 ">
             <h2 className="text-2xl font-semibold mb-2">{event.EventName}</h2>
             <p>
               <strong>Date:</strong> {formatDateTime(event.date)}
@@ -66,14 +66,14 @@ function Tickets() {
             </p>
 
             <button
-              className="bg-orange-400 text-white p-2 rounded mt-4"
+              className="bg-orange-400 text-white p-2 rounded mt-4 hover:opacity-75 font-semibold"
               onClick={submit}
               disabled={isSubmitting}
             >
               {isSubmitting ? "Processing..." : "Confirm Booking"}
             </button>
             <button
-              className="bg-gray-400 text-white p-2 rounded mt-4 ml-4"
+              className="bg-gray-400 text-white p-2 rounded mt-4 ml-4  font-semibold"
               onClick={() => setEvent(null)}
             >
               Cancel
