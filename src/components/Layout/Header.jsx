@@ -32,7 +32,7 @@ const Header = () => {
   );
 
   return (
-    <header className="bg-black text-white p-4">
+    <header className="bg-black text-white p-4 ">
       <nav className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Book Now</h1>
         <ul className="flex space-x-4 text-xl font-semibold transition ease-in-out delay-250">
