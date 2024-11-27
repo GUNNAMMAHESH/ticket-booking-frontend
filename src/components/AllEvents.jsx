@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import CreateEvent from "./event/CreateEvent";
 import { IoArrowForward } from "react-icons/io5";
-
+import formatDateTime from "../utils/formatDateTime";
 function AllEvents() {
   const [allMovies, setAllMovies] = useState([]);
   const [model, setModel] = useState(false);
@@ -34,27 +34,13 @@ function AllEvents() {
     getMovies();
   }, []);
 
-  const formatDateTime = (dateString) => {
-    const date = new Date(dateString);
-    const formattedDate = date.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-    const formattedTime = date.toLocaleTimeString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    return `${formattedDate} ${formattedTime}`;
-  };
-
   const showModel = (event) => {
     setSelectedEvent(event);
     setModel(true);
   };
 
   const handleEdit = (event) => {
-    navigate("/events/edit", { state: { event } }); 
+    navigate("/events/create", { state: { event } }); 
   };
 
   const handleDelete = async (id) => {

@@ -16,7 +16,7 @@ function Home() {
         Welcome,
         <span className="text-orange-400 font-semibold text-3xl">{name}!</span>
       </div>
-      <div className="overflow-x-auto">
+      <div>
         <AllEvents />
       </div>
 

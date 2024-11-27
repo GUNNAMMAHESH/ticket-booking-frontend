@@ -3,7 +3,7 @@ import axiosInstance from "../utils/axiosInstance";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { toastSettings } from "../utils/toastSettings";
-
+import formatDateTime from "../utils/formatDateTime";
 function AllTickets() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,20 +68,6 @@ function AllTickets() {
       console.error("Failed to delete ticket:", error);
       toast.error("Failed to delete ticket.", toastSettings);
     }
-  };
-
-  const formatDateTime = (dateString) => {
-    const date = new Date(dateString);
-    const formattedDate = date.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-    const formattedTime = date.toLocaleTimeString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    return `${formattedDate} ${formattedTime}`;
   };
 
   return (

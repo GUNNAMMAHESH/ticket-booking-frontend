@@ -1,53 +1,96 @@
 import axiosInstance from "../../utils/axiosInstance";
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import formatDateTime from "../../utils/formatDateTime";
 const CreateEvent = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const isEditing = location.state?.event || null;
+  console.log(isEditing);
+  
+
   const [event, setEvent] = useState({
     EventName: "",
     description: "",
     date: "",
     location: "",
     price: "",
-    photo: null, 
+    photo: null,
   });
+
+  useEffect(() => {
+    if (isEditing) {
+      const { EventName, description, date, location, price } = isEditing;
+      console.log("date",date);
+      
+      setEvent({
+        EventName: EventName || "",
+        description: description || "",
+        date:formatDateTime(date)|| "",
+        location: location || "",
+        price: price || "",
+        photo: null, 
+      });
+    }
+  }, [isEditing]);
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-    if (type === 'file') {
-      setEvent({ ...event, [name]: files[0] }); 
+    if (type === "file") {
+      setEvent({ ...event, [name]: files[0] });
     } else {
-      setEvent({ ...event, [name]: value }); 
+      setEvent({ ...event, [name]: value });
     }
   };
 
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log(event); 
 
     const formData = new FormData();
     for (const key in event) {
-      formData.append(key, event[key]); 
+      if (event[key] !== null) {
+        formData.append(key, event[key]);
+      }
     }
 
     try {
-      const response = await axiosInstance.post(
-        "http://localhost:5000/events/create",
-        formData, 
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log(response.data); 
+      let response;
+      if (isEditing) {
+        response = await axiosInstance.post(
+          `https://ticket-booking-backend-ten.vercel.app/events/${isEditing._id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      } else {
+        response = await axiosInstance.post(
+          "https://ticket-booking-backend-ten.vercel.app/events/create",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      }
+
+      console.log(response.data);
+      navigate("/events"); 
     } catch (error) {
-      console.log("Failed to create Event", error.message);
+      console.error("Failed to create or update event", error.message);
     }
   }
+
   return (
     <div>
-        <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
-        <h1 className="text-xl font-bold mb-4">Create Event</h1>
+      <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
+        <h1 className="text-xl font-bold mb-4">
+          {isEditing ? "Edit Event" : "Create Event"}
+        </h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="EventName" className="block font-semibold">
@@ -127,22 +170,22 @@ const CreateEvent = () => {
               type="file"
               id="photo"
               name="photo"
-              accept="image/*" 
+              accept="image/*"
               onChange={handleChange}
               className="w-full p-2 border rounded"
-              required
+              required={!isEditing} 
             />
           </div>
           <button
             type="submit"
             className="w-full font-semibold bg-orange-400 text-white py-2 rounded hover:text-orange-600 hover:bg-white hover:border-2 hover:border-orange-400 transition ease-in-out delay-250 active:bg-orange-400 active:text-white"
           >
-            Create Event
+            {isEditing ? "Update Event" : "Create Event"}
           </button>
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CreateEvent
+export default CreateEvent;
