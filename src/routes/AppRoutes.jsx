@@ -7,7 +7,7 @@ import User from "../pages/User";
 import Event from "../pages/Event";
 import Login from "../components/Login";
 import ErrorPage from "../pages/ErrorPage";
-import Profile from "../pages/Profile";
+import Profile from "../components/Profile";
 import DebugComponent from "../components/DebugComponent";
 import PrivateRoute from "./PrivateRoute";
 import Tickets from "../pages/Tickets";

@@ -77,7 +77,7 @@ function Home() {
 
       <div className="flex flex-col w-3/4 max-h-screen">
         {/* Scrollable section with max height */}
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full overflow-y-scroll">
           <div
             ref={eventsRef}
             id="events"
