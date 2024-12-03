@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import formatDateTime from "../utils/formatDateTime";
 import axiosInstance from "../utils/axiosInstance";
 import AllTickets from "../components/AllTickets";
+import { toast } from "react-toastify";
+import { toastSettings } from "../utils/toastSettings";
 
 function Tickets() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,10 +36,12 @@ function Tickets() {
         eventPayload
       );
       if (response.status === 201) {
+        toast.success("Booking Successfull",toastSettings)
         navigate("/");
       }
     } catch (error) {
       console.error("Error creating ticket:", error.message);
+      toast.success(error.message,toastSettings)
     } finally {
       setIsSubmitting(false);
     }
