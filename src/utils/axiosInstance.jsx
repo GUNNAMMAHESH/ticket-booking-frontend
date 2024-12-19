@@ -1,18 +1,19 @@
 import axios from 'axios';
-import { store } from '../store/Store'; // Access Redux store if needed (e.g., for auth tokens)
-import { logoutUser } from '../features/userSlice'; // Example action to handle token expiration
+import { store } from '../store/Store'; 
+import { logoutUser } from '../features/userSlice';
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_URL || 'http://localhost:5000/',
-  timeout: 5000, // Adjust the timeout if necessary
+  timeout: 5000, 
 });
+console.log(import.meta.env.VITE_APP_BASE_URL );
 
-// Add a request interceptor
+
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = store.getState().user.token; // Access token from Redux state
+    const token = store.getState()?.user?.token; 
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`; // Attach token to headers
+      config.headers['Authorization'] = `Bearer ${token}`; 
       
     }
     return config;
@@ -22,13 +23,13 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Add a response interceptor
+
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Handle specific status codes globally
+   
     if (error.response && error.response.status === 401) {
-      store.dispatch(logoutUser()); // Dispatch logout on 401 Unauthorized
+      store.dispatch(logoutUser()); 
     }
     return Promise.reject(error);
   }
