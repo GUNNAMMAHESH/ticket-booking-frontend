@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { toastSettings } from "../utils/toastSettings";
 import formatDateTime from "../utils/formatDateTime";
 import { MdCloseFullscreen } from "react-icons/md";
+
 function AllTickets() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -74,7 +75,7 @@ function AllTickets() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center ">
+    <div className="flex flex-col items-center justify-center p-4">
       <h1 className="text-orange-400 font-semibold text-3xl mb-6">
         Your Tickets
       </h1>
@@ -90,7 +91,7 @@ function AllTickets() {
               <div
                 key={ticket._id}
                 onClick={() => handleShowModal(ticket)}
-                className="flex flex-col justify-end items-start w-1/3 min-h-80 p-4 text-white text-xl font-semibold border rounded-lg cursor-pointer transition bg-cover bg-center hover:bg-orange-500"
+                className="flex flex-col justify-end items-start w-80 min-h-80 p-4 text-white text-xl font-semibold border rounded-lg cursor-pointer transition bg-cover bg-center hover:bg-orange-500"
                 style={{
                   backgroundImage: `url(${
                     ticket.photo ||
@@ -100,7 +101,7 @@ function AllTickets() {
                 }}
               >
                 <div>
-                  <div>{ticket.TicketName}</div>
+                  <div>{ticket.EventName}</div>
                   <div>{formatDateTime(ticket.date)}</div>
                   <div>{ticket.location}</div>
                 </div>
@@ -114,21 +115,21 @@ function AllTickets() {
 
       {isModalOpen && selectedTicket && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-6 w-11/12 md:w-3/4 lg:w-1/2 rounded-lg shadow-lg flex flex-col">
+          <div className="bg-white p-6 w-11/12 sm:w-3/4 lg:w-1/2 rounded-lg shadow-lg flex flex-col">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-semibold text-gray-700">
                 {selectedTicket.TicketName}
               </h2>
               <button
-                className="text-3xl font-semibold  text-orange-400"
+                className="text-3xl font-semibold text-orange-400"
                 onClick={handleCloseModal}
               >
                 <MdCloseFullscreen />
               </button>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-4 text-left leading-10 text-xl">
-              <div className="w-full lg:w-1/2 h-72">
+            <div className="flex flex-col lg:flex-row gap-4 text-left leading-8 text-lg">
+              <div className="w-full lg:w-1/2 h-64">
                 <img
                   src={
                     selectedTicket.photo ||
