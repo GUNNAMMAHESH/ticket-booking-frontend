@@ -70,7 +70,7 @@ function Home() {
           <span className="text-orange-400 font-semibold text-3xl">{name}!</span>
         </div>
         <div className="flex flex-col items-center justify-center cursor-pointer">
-          {renderSectionLink("events", eventsRef)}
+          {token && renderSectionLink("events", eventsRef)}
           {token && renderSectionLink("tickets", ticketsRef)}
         </div>
       </div>
