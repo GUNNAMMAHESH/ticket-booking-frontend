@@ -90,7 +90,7 @@ function Home() {
             <div
               ref={ticketsRef}
               id="tickets"
-              className="p-4 flex-grow "
+              className="p-4 flex-grow w-full"
             >
               <AllTickets />
             </div>

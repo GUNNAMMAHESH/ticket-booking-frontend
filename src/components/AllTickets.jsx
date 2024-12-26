@@ -4,7 +4,8 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { toastSettings } from "../utils/toastSettings";
 import formatDateTime from "../utils/formatDateTime";
-import { MdCloseFullscreen } from "react-icons/md";
+import { IoPricetagsOutline } from "react-icons/io5";
+import { MdLocationPin, MdDateRange, MdCloseFullscreen } from "react-icons/md";
 
 function AllTickets() {
   const [tickets, setTickets] = useState([]);
@@ -85,26 +86,33 @@ function AllTickets() {
       ) : error ? (
         <div className="text-red-500 text-xl font-semibold">{error}</div>
       ) : (
-        <div className="flex flex-wrap justify-center gap-4 w-full">
+        <div className="flex  flex-wrap justify-center gap-4 full">
           {tickets.length > 0 ? (
             tickets.map((ticket) => (
               <div
                 key={ticket._id}
                 onClick={() => handleShowModal(ticket)}
-                className="flex flex-col justify-end items-start w-80 min-h-80 p-4 text-white text-xl font-semibold border rounded-lg cursor-pointer transition bg-cover bg-center hover:bg-orange-500"
+                className="flex flex-col justify-end items-start w-full min-h-96 p-4 text-white text-xl font-semibold border rounded-lg cursor-pointer transition bg-[50%_10%] bg-cover bg-center hover:bg-orange-500"
                 style={{
-                  backgroundImage: `url(${
-                    ticket.photo ||
-                    "https://via.placeholder.com/150?text=No+Image"
-                  })`,
+                  backgroundImage: ticket.photo
+                    ? `url(${ticket.photo})`
+                    : `url("https://via.placeholder.com/150?text=No+Image")`,
                   backgroundColor: ticket.photo ? "transparent" : "#fb923c",
                 }}
               >
-                <div>
-                  <div>{ticket.EventName}</div>
-                  <div>{formatDateTime(ticket.date)}</div>
-                  <div>{ticket.location}</div>
-                </div>
+                <div>{ticket.EventName}</div>
+              <div className="flex items-center">
+                <MdDateRange className="mr-2" />
+                {formatDateTime(ticket.date)}
+              </div>
+              <div className="flex items-center">
+                <MdLocationPin className="mr-2" />
+                {ticket.location}
+              </div>
+              <div className="flex items-center">
+                <IoPricetagsOutline className="mr-2"/>
+                {ticket.price}
+              </div>
               </div>
             ))
           ) : (
