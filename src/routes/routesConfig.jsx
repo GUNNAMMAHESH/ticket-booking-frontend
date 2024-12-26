@@ -7,18 +7,18 @@ import ErrorPage from "../pages/ErrorPage";
 import { homeLoader } from "../loaders/HomeLoader";
 import Event from "../pages/Event";
 import Login from "../components/Login";
-import PrivateRoute from "./PrivateRoute";
+// import PrivateRoute from "./PrivateRoute";
 
 const routesConfig = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
-    errorElement: <ErrorPage />, // Custom error page
+    errorElement: <ErrorPage />, 
     children: [
       {
         index: true,
         element: <Home />,
-        loader: homeLoader, // Fetch data before rendering Home
+        loader: homeLoader,
       },
       // {
       //   path: "events",

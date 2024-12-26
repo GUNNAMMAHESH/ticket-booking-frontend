@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser,sendOtp } from "../features/userSlice";
+import { loginUser, sendOtp } from "../features/userSlice";
 import { useNavigate } from "react-router-dom";
-import { isTokenExpired } from "../utils/Auth"; 
-import { toast } from 'react-toastify';
+import { isTokenExpired } from "../utils/Auth";
+import { toast } from "react-toastify";
+import { toastSettings } from "../utils/toastSettings";
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    otp: "", 
+    otp: "",
   });
+
+  const [otp, setOtp] = useState("Sent OTP");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
-  const { loading, error, token, user, role } = useSelector(
-    (state) => state.user
-  ); // Access token from Redux
+
+  const { loading, error, token } = useSelector((state) => state.user);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,44 +25,41 @@ const Login = () => {
 
   useEffect(() => {
     if (error) {
-      toast.error(error.message); // Show error toast
+      toast.error(error.message);
     }
   }, [error]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(loginUser(formData)); 
+    dispatch(loginUser(formData));
   };
 
   useEffect(() => {
-    
     if (token) {
-      toast.success("Login successful!"); 
-      navigate("/"); 
+      toast.success("Login successful!",toastSettings);
+      navigate("/");
     }
-  }, [token, navigate]); 
+  }, [token, navigate]);
 
-useEffect(() => {
-  const token = localStorage.getItem("token");
+  useEffect(() => {
+    const token = localStorage.getItem("token");
 
-  const interval = setInterval(() => {
-   
-    
-    if (isTokenExpired(token)) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      dispatch(logoutUser());
-      navigate("/login"); 
-    }
-  }, 60000); 
+    const interval = setInterval(() => {
+      if (isTokenExpired(token)) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        dispatch(logoutUser());
+        navigate("/login");
+      }
+    }, 60000);
 
-  return () => clearInterval(interval); 
-}, [dispatch, navigate]);
+    return () => clearInterval(interval);
+  }, [dispatch, navigate]);
 
   const otpsend = (e) => {
     e.preventDefault();
-    dispatch(sendOtp(formData.email)); 
-    toast.info("OTP sent!");
+    dispatch(sendOtp({ email: formData.email, password: formData.password }));
+    setOtp("Resent OTP");
   };
 
   return (
@@ -98,35 +96,42 @@ useEffect(() => {
             required
           />
         </div>
-        <div className="flex justify-center">
-          <button onClick={otpsend} className="bg-orange-400 text-white p-2 rounded">
-            Send OTP
+        <div className="flex justify-center items-start">
+        
+          <button
+            onClick={otpsend}
+            className={`bg-orange-400 text-white p-2 rounded 
+            }`}
+          >
+            {otp ?`${otp}` : "Send OTP"}
           </button>
         </div>
-        <div className="mb-4">
-          <label htmlFor="otp" className="block font-semibold">
-            OTP
-          </label>
-          <input
-            type="text"
-            id="otp"
-            name="otp"
-            value={formData.otp}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        
-        <button
-          type="submit"
-          className="w-full font-semibold bg-orange-400 text-white py-2 rounded hover:text-orange-600 hover:bg-white hover:border-2 hover:border-orange-400 transition ease-in-out delay-250 active:bg-orange-400 active:text-white"
-          disabled={loading}
-        >
-          {loading ? "Logging in..." : "Login"}
-        </button>
+        {otp && (
+          <>
+            <div className="mb-4">
+              <label htmlFor="otp" className="block font-semibold">
+                Enter OTP
+              </label>
+              <input
+                type="text"
+                id="otp"
+                name="otp"
+                value={formData.otp}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full font-semibold bg-orange-400 text-white py-2 rounded hover:text-orange-600 hover:bg-white hover:border-2 hover:border-orange-400 transition ease-in-out delay-250 active:bg-orange-400 active:text-white"
+              disabled={loading}
+            >
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </>
+        )}
       </form>
-      
     </div>
   );
 };
