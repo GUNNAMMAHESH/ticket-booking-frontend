@@ -7,8 +7,8 @@ function Home() {
   const { user, token } = useSelector((state) => state.user);
   const name = user?.username || "Guest";
 
-  const [activeSection, setActiveSection] = useState("events");
-
+  const [activeSection, setActiveSection] = useState("headerRef");
+const headerRef = useRef(null)
   const eventsRef = useRef(null);
   const ticketsRef = useRef(null);
 
@@ -63,16 +63,16 @@ function Home() {
   );
 
   return (
-    <div className="flex h-screen">
+    <div ref={headerRef} className="flex h-full">
       <div className="flex flex-col justify-start items-start mb-4 w-1/8">
         <div className="text-2xl font-semibold mb-5">
           Welcome,
           <span className="text-orange-400 font-semibold text-3xl">{name}!</span>
         </div>
-        <div className="flex flex-col items-center justify-center cursor-pointer">
+        {/* <div className="flex flex-col items-center justify-center cursor-pointer">
           {token && renderSectionLink("events", eventsRef)}
           {token && renderSectionLink("tickets", ticketsRef)}
-        </div>
+        </div> */}
       </div>
 
       <div className="flex flex-col w-full max-h-screen">
@@ -84,13 +84,14 @@ function Home() {
             className="p-4 flex-grow"
           >
             <AllEvents />
+            
           </div>
 
           {token && (
             <div
               ref={ticketsRef}
               id="tickets"
-              className="p-4 flex-grow w-full"
+              className="p-4 flex-grow w-full bg-black"
             >
               <AllTickets />
             </div>

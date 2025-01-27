@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { isTokenExpired } from "../utils/Auth";
 import { toast } from "react-toastify";
 import { toastSettings } from "../utils/toastSettings";
-import ReCAPTCHA from "react-google-recaptcha"; // Import reCAPTCHA
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -13,9 +13,8 @@ const Login = () => {
     password: "",
     otp: "",
   });
-
   const [otp, setOtp] = useState("Sent OTP");
-  const [captchaValue, setCaptchaValue] = useState(null); // Store CAPTCHA response
+  const [captchaValue, setCaptchaValue] = useState(null); 
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -26,25 +25,44 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleCaptchaChange = (value) => {
-    setCaptchaValue(value); // Update CAPTCHA value on change
-  };
-
   useEffect(() => {
     if (error) {
       toast.error(error.message);
     }
   }, [error]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!captchaValue) {
+    // Check if CAPTCHA is completed (only if CAPTCHA is enabled in production)
+    if (import.meta.env.VITE_ENABLE_CAPTCHA === "true" && !captchaValue) {
       toast.error("Please complete the CAPTCHA.");
       return;
     }
 
-    dispatch(loginUser(formData));
+    // Send CAPTCHA value to the server for verification (if applicable)
+    try {
+      if (import.meta.env.VITE_ENABLE_CAPTCHA === "true") {
+        const response = await fetch('http://localhost:5000/api/verify-captcha', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ captchaValue }),
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          // If CAPTCHA is valid, proceed with login
+          dispatch(loginUser(formData));
+        } else {
+          toast.error("CAPTCHA verification failed.");
+        }
+      } else {
+        // If no CAPTCHA is enabled, proceed with login directly
+        dispatch(loginUser(formData));
+      }
+    } catch (error) {
+      toast.error("Error verifying CAPTCHA.");
+    }
   };
 
   useEffect(() => {
@@ -79,7 +97,7 @@ const Login = () => {
     <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
       <h1 className="text-xl font-bold mb-4">Login</h1>
       {error && <p className="text-red-500">{error.message}</p>}
-      {token && <p className="text-green-500">User Login successful!</p>}{" "}
+      {token && <p className="text-green-500">User Login successful!</p>}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="email" className="block font-semibold">
@@ -117,7 +135,6 @@ const Login = () => {
             {otp ? `${otp}` : "Send OTP"}
           </button>
         </div>
-
         {otp && (
           <>
             <div className="mb-4">
@@ -134,15 +151,16 @@ const Login = () => {
                 required
               />
             </div>
-
-            {/* Google reCAPTCHA widget */}
-            <div className="mb-4">
-              <ReCAPTCHA
-                sitekey="6LfT5sQqAAAAALVGi6uUxG0h91q4Z9HtsSqmt9w7" // Your client-side key
-                onChange={handleCaptchaChange}
-              />
-            </div>
-
+             {/* Render CAPTCHA only if it's enabled in production */}
+        {import.meta.env.VITE_ENABLE_CAPTCHA === "true" && (
+          <div className="mt-4">
+            <ReCAPTCHA
+              sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY} // Access site key from environment variable
+              onChange={(value) => setCaptchaValue(value)} // Store the value when CAPTCHA is completed
+            />
+          </div>
+        )}
+        
             <button
               type="submit"
               className="w-full font-semibold bg-orange-400 text-white py-2 rounded hover:text-orange-600 hover:bg-white hover:border-2 hover:border-orange-400 transition ease-in-out delay-250 active:bg-orange-400 active:text-white"
