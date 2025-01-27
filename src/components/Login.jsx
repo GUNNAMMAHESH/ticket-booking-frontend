@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { isTokenExpired } from "../utils/Auth";
 import { toast } from "react-toastify";
 import { toastSettings } from "../utils/toastSettings";
+import ReCAPTCHA from "react-google-recaptcha"; // Import reCAPTCHA
+
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -13,6 +15,7 @@ const Login = () => {
   });
 
   const [otp, setOtp] = useState("Sent OTP");
+  const [captchaValue, setCaptchaValue] = useState(null); // Store CAPTCHA response
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -23,6 +26,10 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleCaptchaChange = (value) => {
+    setCaptchaValue(value); // Update CAPTCHA value on change
+  };
+
   useEffect(() => {
     if (error) {
       toast.error(error.message);
@@ -31,12 +38,18 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!captchaValue) {
+      toast.error("Please complete the CAPTCHA.");
+      return;
+    }
+
     dispatch(loginUser(formData));
   };
 
   useEffect(() => {
     if (token) {
-      toast.success("Login successful!",toastSettings);
+      toast.success("Login successful!", toastSettings);
       navigate("/");
     }
   }, [token, navigate]);
@@ -97,15 +110,14 @@ const Login = () => {
           />
         </div>
         <div className="flex justify-center items-start">
-        
           <button
             onClick={otpsend}
-            className={`bg-orange-400 text-white p-2 rounded 
-            }`}
+            className={`bg-orange-400 text-white p-2 rounded`}
           >
-            {otp ?`${otp}` : "Send OTP"}
+            {otp ? `${otp}` : "Send OTP"}
           </button>
         </div>
+
         {otp && (
           <>
             <div className="mb-4">
@@ -122,6 +134,15 @@ const Login = () => {
                 required
               />
             </div>
+
+            {/* Google reCAPTCHA widget */}
+            <div className="mb-4">
+              <ReCAPTCHA
+                sitekey="6LfT5sQqAAAAALVGi6uUxG0h91q4Z9HtsSqmt9w7" // Your client-side key
+                onChange={handleCaptchaChange}
+              />
+            </div>
+
             <button
               type="submit"
               className="w-full font-semibold bg-orange-400 text-white py-2 rounded hover:text-orange-600 hover:bg-white hover:border-2 hover:border-orange-400 transition ease-in-out delay-250 active:bg-orange-400 active:text-white"

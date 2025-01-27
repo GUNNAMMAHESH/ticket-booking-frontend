@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -10,14 +10,13 @@ import { MdLocationPin, MdDateRange, MdCloseFullscreen } from "react-icons/md";
 function AllTickets() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
 
   const { role, id } = useSelector((state) => state.user.user) || {};
   const isMounted = useRef(false);
 
-  const fetchTickets = async () => {
+  const fetchTickets = useCallback(async () => {
     setLoading(true);
     try {
       const params = role === "admin" ? {} : { userId: id };
@@ -42,7 +41,7 @@ function AllTickets() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [role, id]);
 
   useEffect(() => {
     if (!isMounted.current) {
@@ -76,23 +75,22 @@ function AllTickets() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
-      <h1 className="text-orange-400 font-semibold text-3xl mb-6">
-        Your Tickets
-      </h1>
-
+    <div className="flex flex-col items-center justify-center bg-black">
+      <div className="flex items-center w-full font-semibold text-3xl mb-6">
+        <div className="flex justify-center w-full text-orange-400">
+          <span>Tickets</span>
+        </div>
+      </div>
       {loading ? (
         <div className="text-xl text-gray-500">Loading Tickets...</div>
-      ) : error ? (
-        <div className="text-red-500 text-xl font-semibold">{error}</div>
       ) : (
-        <div className="flex  flex-wrap justify-center gap-4 full">
+        <div className="flex flex-wrap justify-start gap-4 w-full mr-5">
           {tickets.length > 0 ? (
             tickets.map((ticket) => (
               <div
                 key={ticket._id}
                 onClick={() => handleShowModal(ticket)}
-                className="flex flex-col justify-end items-start w-full min-h-96 p-4 text-white text-xl font-semibold border rounded-lg cursor-pointer transition bg-[50%_10%] bg-cover bg-center hover:bg-orange-500"
+                className="flex flex-col justify-end items-start w-80 hover:scale-1.1  min-h-96 p-4 text-white text-xl font-semibold bg-orange-400 shadow-xl border-0 rounded-lg cursor-pointer transition bg-[50%_10%] bg-cover bg-center "
                 style={{
                   backgroundImage: ticket.photo
                     ? `url(${ticket.photo})`
@@ -101,18 +99,18 @@ function AllTickets() {
                 }}
               >
                 <div>{ticket.EventName}</div>
-              <div className="flex items-center">
-                <MdDateRange className="mr-2" />
-                {formatDateTime(ticket.date)}
-              </div>
-              <div className="flex items-center">
-                <MdLocationPin className="mr-2" />
-                {ticket.location}
-              </div>
-              <div className="flex items-center">
-                <IoPricetagsOutline className="mr-2"/>
-                {ticket.price}
-              </div>
+                <div className="flex items-center">
+                  <MdDateRange className="mr-2" />
+                  {formatDateTime(ticket.date)}
+                </div>
+                <div className="flex items-center">
+                  <MdLocationPin className="mr-2" />
+                  {ticket.location}
+                </div>
+                <div className="flex items-center">
+                  <IoPricetagsOutline className="mr-2" />
+                  {ticket.price}
+                </div>
               </div>
             ))
           ) : (
@@ -126,7 +124,7 @@ function AllTickets() {
           <div className="bg-white p-6 w-11/12 sm:w-3/4 lg:w-1/2 rounded-lg shadow-lg flex flex-col">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-semibold text-gray-700">
-                {selectedTicket.TicketName}
+                {selectedTicket.EventName}
               </h2>
               <button
                 className="text-3xl font-semibold text-orange-400"
@@ -143,7 +141,7 @@ function AllTickets() {
                     selectedTicket.photo ||
                     "https://via.placeholder.com/150?text=No+Image"
                   }
-                  alt={selectedTicket.TicketName}
+                  alt={selectedTicket.EventName}
                   className="w-full h-full object-cover rounded-lg"
                 />
               </div>

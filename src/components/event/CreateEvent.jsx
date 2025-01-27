@@ -129,12 +129,12 @@ const CreateEvent = () => {
 
   return (
     <div>
-      <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
-        <h1 className="text-xl font-bold mb-4">
+      <div className="max-w-md mx-auto p-5 pt-3 bg-white shadow-md rounded-lg">
+        <h1 className="text-xl font-bold mb-1">
           {isEditing ? "Edit Event" : "Create Event"}
         </h1>
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
+          <div className="mb-2">
             <label htmlFor="EventName" className="block font-semibold">
               Event Name
             </label>
@@ -144,11 +144,11 @@ const CreateEvent = () => {
               name="EventName"
               value={event.EventName}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-1 border rounded"
               required
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-2">
             <label htmlFor="description" className="block font-semibold">
               Description
             </label>
@@ -158,11 +158,11 @@ const CreateEvent = () => {
               value={event.description}
               onChange={handleChange}
               placeholder="Enter description"
-              className="mt-4 w-full p-2 border border-gray-300 rounded"
-              rows="3"
+              className="mt-1 w-full p-2 border border-gray-300 rounded"
+              rows="2"
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-1">
             <label htmlFor="date" className="block font-semibold">
               Date & Time
             </label>
@@ -172,11 +172,12 @@ const CreateEvent = () => {
               name="date"
               value={event.date}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-1 border rounded"
               required
             />
           </div>
-          <div className="mb-4">
+          <div className="flex gap-4 ">
+          <div className="mb-1">
             <label htmlFor="price" className="block font-semibold">
               Price
             </label>
@@ -186,11 +187,11 @@ const CreateEvent = () => {
               name="price"
               value={event.price}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-1 border rounded"
               required
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-1">
             <label htmlFor="location" className="block font-semibold">
               Location
             </label>
@@ -200,11 +201,12 @@ const CreateEvent = () => {
               name="location"
               value={event.location}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-1 border rounded"
               required
             />
           </div>
-          <div className="mb-4">
+          </div>
+          <div className="mb-2">
             <label htmlFor="photo" className="block font-semibold">
               Event Photo
             </label>

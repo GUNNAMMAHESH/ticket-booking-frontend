@@ -43,8 +43,8 @@ const Signup = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
-      <h1 className="text-xl font-bold mb-4">Create New User</h1>
+    <div className="max-w-md mx-auto p-5 pt-3 bg-white shadow-md rounded-lg">
+      <h1 className="text-xl font-bold mb-2">Create New User</h1>
       {error && <p className="text-red-500">{error.message}</p>}
       {/* {user && (
         <p className="text-green-500">
@@ -52,7 +52,7 @@ const Signup = () => {
         </p>
       )} */}
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
+        <div className="mb-2">
           <label htmlFor="username" className="block font-semibold">
             Username
           </label>
@@ -66,7 +66,7 @@ const Signup = () => {
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-2">
           <label htmlFor="role" className="block font-semibold">
             Role
           </label>
@@ -82,7 +82,7 @@ const Signup = () => {
             <option value="admin">Admin</option>
           </select>
         </div>
-        <div className="mb-4">
+        <div className="mb-2">
           <label htmlFor="phone" className="block font-semibold">
             Phone
           </label>
@@ -96,7 +96,7 @@ const Signup = () => {
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-2">
           <label htmlFor="email" className="block font-semibold">
             Email
           </label>
@@ -110,7 +110,7 @@ const Signup = () => {
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-2">
           <label htmlFor="password" className="block font-semibold">
             Password
           </label>
@@ -124,7 +124,7 @@ const Signup = () => {
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-2">
           <label htmlFor="ConfirmPassword" className="block font-semibold">
             Confirm Password
           </label>
