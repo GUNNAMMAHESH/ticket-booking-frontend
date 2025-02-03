@@ -84,7 +84,7 @@ function AllTickets() {
       {loading ? (
         <div className="text-xl text-gray-500">Loading Tickets...</div>
       ) : (
-        <div className="flex flex-wrap justify-start gap-4 w-full mr-5">
+        <div className="flex flex-row justify-start gap-4 w-full mr-5">
           {tickets.length > 0 ? (
             tickets.map((ticket) => (
               <div

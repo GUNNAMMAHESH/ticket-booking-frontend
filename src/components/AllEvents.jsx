@@ -7,6 +7,8 @@ import { IoArrowForward, IoPricetagsOutline } from "react-icons/io5";
 import formatDateTime from "../utils/formatDateTime";
 import { MdLocationPin, MdDateRange, MdCloseFullscreen } from "react-icons/md";
 import { FaPen } from "react-icons/fa";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 function AllEvents() {
   const [events, setEvents] = useState([]);
@@ -112,7 +114,6 @@ function AllEvents() {
                 <IoPricetagsOutline className="mr-2" />
                 {event.price}
               </div>
-             
             </div>
           ))}
         </div>
@@ -160,22 +161,38 @@ function AllEvents() {
               </div>
             </div>
             {role === "admin" && (
-                <div className="flex justify-between mt-2 space-x-2">
-                  <button
-                    onClick={() => handleEdit(selectedEvent)}
-                    className="bg-blue-500 text-white rounded px-2 py-1"
-                  >
-                    <FaPen />
+              <div className="flex flex-row justify-end mt-2 space-x-2">
+                <div className=" flex flex-row bg-blue-500 text-white rounded px-3 py-1">
+                  <FaPen className="text-3xl" />
+                  <button onClick={() => handleEdit(selectedEvent)}>
                     Edit
                   </button>
+                </div>
+
+                <div className="flex flex-row ">
                   <button
                     onClick={() => handleDelete(selectedEvent)}
                     className="bg-red-500 text-white rounded px-2 py-1"
                   >
+                    <FontAwesomeIcon icon={faTrash} className="text-xl" />
                     Delete
                   </button>
                 </div>
-              )}
+              </div>
+            )}
+            {role === "user" && (
+              <div className="flex justify-center">
+               
+                <button
+                  onClick={() =>
+                    navigate("/tickets", { state: { event: selectedEvent } })
+                  }
+                  className="bg-orange-400 font-semibold text-2xl text-white p-2 m-2  hover:opacity-75 active:opacity-100"
+                >
+                  Book Now
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
