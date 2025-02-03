@@ -35,26 +35,25 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (import.meta.env.VITE_ENABLE_CAPTCHA === "true" && !captchaValue) {
+    if (import.meta.env.ENABLE_CAPTCHA === "true" && !captchaValue) {
       toast.error("Please complete the CAPTCHA.");
       return;
     }
 
     try {
-      if (import.meta.env.VITE_ENABLE_CAPTCHA === "true") {
+      if (import.meta.env.ENABLE_CAPTCHA === "true") {
         
         const response = await axiosInstance.post("/user/verify-captcha", {
           captchaValue: captchaValue,  
         });
 
         if (response.data.success) {
-          // If CAPTCHA is valid, proceed with login
           dispatch(loginUser(formData));
         } else {
           toast.error("CAPTCHA verification failed.");
         }
       } else {
-        // If no CAPTCHA is enabled, proceed with login directly
+       
         dispatch(loginUser(formData));
       }
     } catch (error) {
@@ -150,10 +149,10 @@ const Login = () => {
               />
             </div>
             {/* Render CAPTCHA only if it's enabled in production */}
-            {import.meta.env.VITE_ENABLE_CAPTCHA === "true" && (
+            {import.meta.env.ENABLE_CAPTCHA === "true" && (
               <div className="mt-4">
                 <ReCAPTCHA
-                  sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                  sitekey={import.meta.env.RECAPTCHA_SITE_KEY}
                   onChange={(value) => setCaptchaValue(value)}
                 />
               </div>

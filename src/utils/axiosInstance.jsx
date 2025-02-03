@@ -2,10 +2,10 @@ import axios from "axios";
 import { store } from "../store/Store"; 
 import { logoutUser } from "../features/userSlice";
 
-const LIVE_BACKEND = import.meta.env.VITE_APP_BACKEND_LIVE;
-const LOCAL_BACKEND = import.meta.env.VITE_APP_BACKEND_LOCAL || "http://localhost:5000";
+const LIVE_BACKEND = import.meta.env.APP_BACKEND_LIVE;
+const LOCAL_BACKEND = import.meta.env.APP_BACKEND_LOCAL || "http://localhost:5000";
 
-let BASE_URL = LIVE_BACKEND || LOCAL_BACKEND;
+let BASE_URL = LOCAL_BACKEND || LIVE_BACKEND;
 
 console.log("Using backend URL:", BASE_URL);
 
@@ -35,7 +35,7 @@ axiosInstance.interceptors.response.use(
       }
 
       if (LIVE_BACKEND && BASE_URL === LIVE_BACKEND && (error.response.status >= 500 || !error.response)) {
-        console.warn("Live backend is down. Switching to local backend...");
+        console.warn("local backend is down. Switching to Live backend...");
         BASE_URL = LOCAL_BACKEND;
         axiosInstance.defaults.baseURL = BASE_URL;
       }
