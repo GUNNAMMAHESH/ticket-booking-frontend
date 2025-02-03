@@ -6,6 +6,7 @@ import { isTokenExpired } from "../utils/Auth";
 import { toast } from "react-toastify";
 import { toastSettings } from "../utils/toastSettings";
 import ReCAPTCHA from "react-google-recaptcha";
+import axiosInstance from "../utils/axiosInstance";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -14,7 +15,7 @@ const Login = () => {
     otp: "",
   });
   const [otp, setOtp] = useState("Sent OTP");
-  const [captchaValue, setCaptchaValue] = useState(null); 
+  const [captchaValue, setCaptchaValue] = useState(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -34,23 +35,19 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if CAPTCHA is completed (only if CAPTCHA is enabled in production)
     if (import.meta.env.VITE_ENABLE_CAPTCHA === "true" && !captchaValue) {
       toast.error("Please complete the CAPTCHA.");
       return;
     }
 
-    // Send CAPTCHA value to the server for verification (if applicable)
     try {
       if (import.meta.env.VITE_ENABLE_CAPTCHA === "true") {
-        const response = await fetch('http://localhost:5000/api/verify-captcha', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ captchaValue }),
+        
+        const response = await axiosInstance.post("/user/verify-captcha", {
+          captchaValue: captchaValue,  
         });
 
-        const data = await response.json();
-        if (data.success) {
+        if (response.data.success) {
           // If CAPTCHA is valid, proceed with login
           dispatch(loginUser(formData));
         } else {
@@ -64,6 +61,7 @@ const Login = () => {
       toast.error("Error verifying CAPTCHA.");
     }
   };
+
 
   useEffect(() => {
     if (token) {
@@ -151,16 +149,16 @@ const Login = () => {
                 required
               />
             </div>
-             {/* Render CAPTCHA only if it's enabled in production */}
-        {import.meta.env.VITE_ENABLE_CAPTCHA === "true" && (
-          <div className="mt-4">
-            <ReCAPTCHA
-              sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY} // Access site key from environment variable
-              onChange={(value) => setCaptchaValue(value)} // Store the value when CAPTCHA is completed
-            />
-          </div>
-        )}
-        
+            {/* Render CAPTCHA only if it's enabled in production */}
+            {import.meta.env.VITE_ENABLE_CAPTCHA === "true" && (
+              <div className="mt-4">
+                <ReCAPTCHA
+                  sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                  onChange={(value) => setCaptchaValue(value)}
+                />
+              </div>
+            )}
+
             <button
               type="submit"
               className="w-full font-semibold bg-orange-400 text-white py-2 rounded hover:text-orange-600 hover:bg-white hover:border-2 hover:border-orange-400 transition ease-in-out delay-250 active:bg-orange-400 active:text-white"
