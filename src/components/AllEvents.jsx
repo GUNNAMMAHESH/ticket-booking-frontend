@@ -9,6 +9,7 @@ import { MdLocationPin, MdDateRange, MdCloseFullscreen } from "react-icons/md";
 import { FaPen } from "react-icons/fa";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 
 function AllEvents() {
   const [events, setEvents] = useState([]);
@@ -44,14 +45,17 @@ function AllEvents() {
   const handleEdit = (event) =>
     navigate("/events/create", { state: { event } });
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (event) => {
     try {
-      await axiosInstance.delete(`/events/delete/${id}`);
-      setEvents((prevEvents) => prevEvents.filter((event) => event._id !== id));
+      // Pass only the _id of the event, not the whole event object
+      await axiosInstance.delete(`/events/delete/${event._id}`);
+      setEvents((prevEvents) => prevEvents.filter((e) => e._id !== event._id));
     } catch (err) {
-      setError("Failed to delete event. Please try again later.");
+      // setError("Failed to delete event. Please try again later.");
+      toast.warn("Failed to Delete")
     }
   };
+  
 
   if (isCreate) {
     return <CreateEvent />;
@@ -72,7 +76,7 @@ function AllEvents() {
   return (
     <div className="flex flex-col items-center justify-center bg-black">
       <div className="flex items-center w-full font-semibold text-3xl mb-6">
-        <div className="flex justify-center w-[95%] text-orange-400">
+        <div className="flex justify-center w-full text-orange-400">
           <span>Events</span>
         </div>
         {role === "admin" && (
@@ -88,11 +92,11 @@ function AllEvents() {
       {loading ? (
         <div className="text-xl text-gray-500">Loading Movies...</div>
       ) : (
-        <div className="flex flex-row justify-start gap-4 w-full mr-5">
+        <div className="flex flex-wrap justify-evenly gap-4 mr-5">
           {events.map((event) => (
             <div
               key={event._id}
-              className="flex flex-col justify-end items-start w-full hover:scale-1.1  min-h-96 p-4 text-white text-xl font-semibold bg-orange-400 shadow-xl border-0 rounded-lg cursor-pointer transition bg-[50%_10%] bg-cover bg-center "
+              className="flex flex-col justify-end items-start w-full sm:w-1/2 lg:w-1/4 hover:scale-1.1 min-h-96 p-4 text-white text-xl font-semibold bg-orange-400 shadow-xl border-0 rounded-lg cursor-pointer transition bg-[50%_10%] bg-cover bg-center"
               style={{
                 backgroundImage: event.photo
                   ? `url(${event.photo})`
@@ -164,8 +168,10 @@ function AllEvents() {
               <div className="flex flex-row justify-end mt-2 space-x-2">
                 <div className=" flex flex-row items-center bg-blue-500 text-white rounded px-3 py-2 gap-1">
                   <FaPen className="text-2xl" />
-                  <button onClick={() => handleEdit(selectedEvent)}
-                    className="font-semibold text-xl">
+                  <button
+                    onClick={() => handleEdit(selectedEvent)}
+                    className="font-semibold text-xl"
+                  >
                     Edit
                   </button>
                 </div>
@@ -183,7 +189,6 @@ function AllEvents() {
             )}
             {role === "user" && (
               <div className="flex justify-center">
-               
                 <button
                   onClick={() =>
                     navigate("/tickets", { state: { event: selectedEvent } })

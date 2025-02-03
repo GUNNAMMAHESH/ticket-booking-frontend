@@ -64,7 +64,7 @@ const headerRef = useRef(null)
 
   return (
     <div ref={headerRef} className="flex h-full">
-      <div className="flex flex-col justify-start items-start mb-4 w-1/8">
+      <div className="flex flex-col justify-start items-start mb-4 w-32 fixed">
         <div className=" flex flex-row text-2xl font-semibold mb-5">
           <div className="text-white">Welcome,</div>
           <span className="text-orange-400 font-semibold text-3xl">{name}!</span>
@@ -75,7 +75,7 @@ const headerRef = useRef(null)
         </div>
       </div>
 
-      <div className="flex flex-col w-full">
+      <div className="ml-[15%] w-4/5  p-4">
         {/* Scrollable section with max height */}
         <div className="flex flex-col  w-full ">
           <div

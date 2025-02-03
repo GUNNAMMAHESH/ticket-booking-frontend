@@ -84,13 +84,13 @@ function AllTickets() {
       {loading ? (
         <div className="text-xl text-gray-500">Loading Tickets...</div>
       ) : (
-        <div className="flex flex-row justify-start gap-4 w-full mr-5">
+        <div className="flex flex-wrap justify-evenly gap-4 mr-5">
           {tickets.length > 0 ? (
             tickets.map((ticket) => (
               <div
                 key={ticket._id}
                 onClick={() => handleShowModal(ticket)}
-                className="flex flex-col justify-end items-start w-80 hover:scale-1.1  min-h-96 p-4 text-white text-xl font-semibold bg-orange-400 shadow-xl border-0 rounded-lg cursor-pointer transition bg-[50%_10%] bg-cover bg-center "
+                className="flex flex-col justify-end items-start w-full sm:w-1/2 lg:w-1/4 hover:scale-1.1 min-h-96 p-4 text-white text-xl font-semibold bg-orange-400 shadow-xl border-0 rounded-lg cursor-pointer transition bg-[50%_10%] bg-cover bg-center"
                 style={{
                   backgroundImage: ticket.photo
                     ? `url(${ticket.photo})`
