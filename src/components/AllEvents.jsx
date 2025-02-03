@@ -162,17 +162,18 @@ function AllEvents() {
             </div>
             {role === "admin" && (
               <div className="flex flex-row justify-end mt-2 space-x-2">
-                <div className=" flex flex-row bg-blue-500 text-white rounded px-3 py-1">
-                  <FaPen className="text-3xl" />
-                  <button onClick={() => handleEdit(selectedEvent)}>
+                <div className=" flex flex-row items-center bg-blue-500 text-white rounded px-3 py-2 gap-1">
+                  <FaPen className="text-2xl" />
+                  <button onClick={() => handleEdit(selectedEvent)}
+                    className="font-semibold text-xl">
                     Edit
                   </button>
                 </div>
 
-                <div className="flex flex-row ">
+                <div className="flex flex-row bg-red-500 text-white rounded px-3 py-2 gap-1">
                   <button
                     onClick={() => handleDelete(selectedEvent)}
-                    className="bg-red-500 text-white rounded px-2 py-1"
+                    className="font-semibold text-xl"
                   >
                     <FontAwesomeIcon icon={faTrash} className="text-xl" />
                     Delete

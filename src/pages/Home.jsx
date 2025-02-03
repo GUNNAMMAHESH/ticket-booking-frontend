@@ -54,7 +54,7 @@ const headerRef = useRef(null)
       className={`text-3xl font-semibold ${
         activeSection === sectionName
           ? "underline text-orange-400"
-          : "text-black"
+          : "text-white"
       }`}
       onClick={() => scrollToSection(sectionRef, sectionName)}
     >
@@ -65,17 +65,17 @@ const headerRef = useRef(null)
   return (
     <div ref={headerRef} className="flex h-full">
       <div className="flex flex-col justify-start items-start mb-4 w-1/8">
-        <div className="text-2xl font-semibold mb-5">
-          Welcome,
+        <div className=" flex flex-row text-2xl font-semibold mb-5">
+          <div className="text-white">Welcome,</div>
           <span className="text-orange-400 font-semibold text-3xl">{name}!</span>
         </div>
-        {/* <div className="flex flex-col items-center justify-center cursor-pointer">
+        <div className="flex flex-col items-center justify-center cursor-pointer">
           {token && renderSectionLink("events", eventsRef)}
           {token && renderSectionLink("tickets", ticketsRef)}
-        </div> */}
+        </div>
       </div>
 
-      <div className="flex flex-col w-full max-h-screen">
+      <div className="flex flex-col w-full">
         {/* Scrollable section with max height */}
         <div className="flex flex-col  w-full ">
           <div
