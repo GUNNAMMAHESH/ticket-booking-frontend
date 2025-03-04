@@ -3,7 +3,7 @@ import { store } from "../store/Store";
 import { logoutUser } from "../features/userSlice";
 
 const LIVE_BACKEND = import.meta.env.VITE_APP_BACKEND_LIVE ;
-const LOCAL_BACKEND = import.meta.env.VITE_APP_BACKEND_LOCAL || "http://localhost:5000/";
+const LOCAL_BACKEND = import.meta.env.VITE_APP_BACKEND_LOCAL;
 
 let BASE_URL = LIVE_BACKEND ||  LOCAL_BACKEND;
 
