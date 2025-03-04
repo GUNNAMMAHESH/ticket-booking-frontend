@@ -2,10 +2,10 @@ import axios from "axios";
 import { store } from "../store/Store"; 
 import { logoutUser } from "../features/userSlice";
 
-const LIVE_BACKEND = import.meta.env.APP_BACKEND_LIVE;
-const LOCAL_BACKEND = import.meta.env.APP_BACKEND_LOCAL || "http://localhost:5000";
+const LIVE_BACKEND = import.meta.env.VITE_APP_BACKEND_LIVE ;
+const LOCAL_BACKEND = import.meta.env.VITE_APP_BACKEND_LOCAL || "http://localhost:5000/";
 
-let BASE_URL = LOCAL_BACKEND || LIVE_BACKEND;
+let BASE_URL = LIVE_BACKEND ||  LOCAL_BACKEND;
 
 console.log("Using backend URL:", BASE_URL);
 
