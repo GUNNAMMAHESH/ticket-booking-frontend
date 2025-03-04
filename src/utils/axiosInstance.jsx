@@ -7,7 +7,7 @@ const LOCAL_BACKEND = import.meta.env.VITE_APP_BACKEND_LOCAL;
 
 let BASE_URL = LIVE_BACKEND ||  LOCAL_BACKEND;
 
-console.log("Using backend URL:", BASE_URL);
+console.log("Using backend URL: ", BASE_URL);
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
